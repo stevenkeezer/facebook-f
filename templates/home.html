@@ -1,0 +1,42 @@
+{% extends 'layout.html' %} {% block body %} {% include 'sidebar.html' %}
+<div style="font-size: 20px" class="feed-content">
+  <div class="recentcontainer">
+    <div id="newpost" class="newpost">
+      <div class="w-100" id="new_status">
+        <div class="" id="post_content">
+          <div class="textarea_wrap">
+            <form method="POST" action="/post/new">
+              <textarea
+                id="new-post"
+                name="post"
+                width="100%"
+                height="100%"
+                class="col"
+                placeholder="What's on your mind?"
+              ></textarea>
+
+              <div class="text-right">
+                <button class="btn btn-default ">
+                  <span class="glyphicon glyphicon-cog"></span>Custom<span
+                    class="caret"
+                  ></span>
+                </button>
+                <button type="submit" class="btn btn-primary">Post</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-xs-12" id="post_footer">
+          <div class="col-xs-5 pb-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% for post in posts %} {% include 'post.html' %} {% endfor %} {% include
+  'ads.html' %} {% include 'conversations.html' %}
+  <script src="https://production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+
+  {% endblock body %}
+</div>

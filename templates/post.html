@@ -1,0 +1,153 @@
+<div class="recentcontainer">
+        <div class="newpostheader">
+          <div class="row">
+
+            <a href="{{url_for('user_profile', id = post.user_id)}}">
+                {% if post.user.img_url == None %}
+                <img
+                class="rounded-circle"
+                src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
+              />
+                {% else %}
+                <img class="rounded-circle" src="{{post.user.img_url}}" />
+                {% endif %}
+              <span >{{post.user.name}}</span>
+            </a>
+            {% if current_user.id == post.user_id %}
+            <form action="/delete_post/{{post.id}}" method="POST">
+                <button style="max-height: 25px;">DELETE</button>
+            </form>
+              <button style="max-height: 25px;" name={{post.id}} onclick="setToEditable(this.name)">EDIT</button>
+              <form action="/edit_post/{{post.id}}" method="POST" >
+                <button style="max-height: 25px;" onclick="setToEditableFalse()">SAVE</button>
+                {% endif %}
+              
+                </div>
+                <p>
+                  <a class="date" href="javascript:void(0)">{{moment(post.created_at).fromNow(refresh=True)}}
+                    </a>
+                  <a href="javascript:void(0)">
+                    <i class="fa fa-globe"></i>
+                  </a>
+                <div class="rightsideofpost">
+                  <a class="follow" href="javascript:void(0)">
+                    <i class="fa fa-star"></i>
+                  </a>
+                  <a class="personpostmenu" href="javascript:void(0)">
+                    <i class="fa fa-caret-down"></i>
+                  </a>
+                </div>
+                </p>
+            </div>
+              <div  class="newpost">
+                <input readonly="true" id={{post.id}} name="body" value="{{post.body}}" class="postcontent">
+                {% if post.img != None %}
+                <img class="img-fluid" src='{{ post.img }}' >
+                {% endif %}
+
+        </div>
+          </form>
+        <ul class="community-counter nav nav-tabs nav-justified">
+          <li>
+            <a href="javascript:void(0)">
+              <i onclick="location=location" class="fa fa-thumbs-up"></i>
+               <span>{{post.like}}</span>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa fa-comment"></i>
+              <span>{{post.comments|length}}</span>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa fa-share"></i>
+              <!-- <span>4</span> -->
+            </a>
+          </li>
+        </ul>
+        <ul class="newpostfooter nav nav-tabs nav-justified d-flex">
+          <form id="my_form" action="/post/{{post.id}}/like" method="POST">
+          <a  href="javascript:void(0)">
+              <i class="fa fa-thumbs-up"></i>
+              <button style="border:none; color:#007bff" type="submit"><span>Like</span></button>
+            </a>
+          </form>
+           
+              <a href="javascript:void(0)" title="Send this to friends or post it to your timeline">
+                <i class="fa fa-share"></i>
+                <span>Share</span>
+              </a>
+          </ul>
+        <div class="commentpost">
+          <div class="input-group ">
+            <a href="javascript:void(0)">
+              {% if post.user.img_url == None %}
+              <img
+              class="rounded-circle"
+              src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
+            />
+              {% else %}
+              <img class="rounded-circle mr-3" src="{{post.user.img_url}}" />
+              {% endif %}
+            </a>
+            <form  action="/post/{{post.id}}/comments" method="POST">
+              <div class="row">
+                <textarea style="width: 44vw;" id="myInput" type="submit" name="body" class="form-control" placeholder="Write a comment..."></textarea>
+                <button style="max-height: 25px;" class="mt-3" id="myBtn" onclick="process()" type="submit">Post</button>
+              </div>
+            </form>
+          </div>
+          {% for comment in post.comments %}
+          <div class="row pl-4">
+            {% if comment.user_name.img_url == None %}
+            <img
+            class="mr-4 rounded-circle"
+            src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
+          />
+            {% else %}
+            <img class="mr-4 rounded-circle"  src={{comment.user_name.img_url}}>
+            {% endif %}
+            <div class="row">
+              <a class="mt-3 mr-1" href="#">{{comment.user_name.name}}</a>
+            </div>
+            <form action="/post/edit_comment/{{comment.id}}"  method="POST" >
+              <input readonly class="commentContent mt-3 ml-3" style="width: 26vw" name="body" id={{comment.id}} value="{{comment.body}}"/>
+              {% if current_user.id == comment.user_id %}
+              <button style="max-height: 25px; margin-top: 16px;"  onclick="window.location.reload()" type="submit">Save</button>
+            </form>
+            <button style="max-height: 25px; margin-top: 16px;" name={{comment.id}}  onclick="setToCommentEditable(this.name)">Edit</button>
+            <form action="/post/comment/{{comment.id}}"  method="POST">
+              <button style="max-height: 25px; margin-top: 16px;" >Delete</button>
+            </form>
+          <h5 style="margin-top: 16px;" >&nbsp{{moment(comment.created_at).fromNow(refresh=True)}}</h5>
+            {% endif %}
+        </div>
+          {% endfor %}
+          <a href="{{url_for('view_post', id=post.id)}}">View more comments</a>
+        </div>
+
+        <script>
+          function setToEditable(id) {
+            let numString = String(id)
+            document.getElementById(numString).readOnly = false
+          }
+          function setToEditableFalse() {
+            console.log("fired")
+            document.getElementsById("postcontent").readOnly = true
+            document.getElementsByName('body').setAttribute("readonly")
+          }
+
+          function setToCommentEditable(id) {
+            let numString = String(id)
+            document.getElementById(id).removeAttribute("readonly")
+          }
+
+          function setToCommentEditableFalse(id) {
+            console.log('hi')
+            let numString = String(id)
+            document.getElementsById(String(id)).readOnly = "true";
+          }
+        </script>
+      </div>
