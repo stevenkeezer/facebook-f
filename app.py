@@ -13,8 +13,6 @@ app.config["SECRET_KEY"] = "here is my secret key"
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 login_manager = LoginManager(app)
 moment = Moment(app)
-
-
 class User(UserMixin, db.Model):
   __tablename__ = 'users'
   id = db.Column(db.Integer, primary_key=True)
