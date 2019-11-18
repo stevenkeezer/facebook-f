@@ -20,7 +20,7 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="logo" href="home">
+      <a class="logo" href="{{url_for('home')}}">
         <img
           alt=""
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QAOwBeAJXJ9VaZAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QUcFAwZEBLpsAAAAO5JREFUSMdj2Hrw+v+///79pzb4++/f/60Hr/9n/Pvv338mRkYGWoB///8zMP7///8/Aw0BCyWaL99+wXDk7D2Gdx+/M3CwszDw8bAziAvxMfg5aVFuQe+Cgwzr91/FKodsARM5hu89cQen4eiALAs27LtC2zi4+eA1Cr8q2YnBzVqNgYWZiTo++PbzNwrf2UIFq+FkW4AO2NlYqBsHpACiM5pN/DSiDFzRGcUgIyFAOx9IiPLRLoj4eTgwIpuqFkgK85IfB/ji48jCrIFLRaMWjAQL/tGwSv73/z8D047DNxloYcm///8Zdhy+yQAAwrOldG/7uKoAAAAASUVORK5CYII="
@@ -47,18 +47,21 @@
             <img
               src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
             />
-            <a href="account">{{current_user.name}}</a>
+            <a href="{{url_for('account')}}">{{current_user.name}}</a>
             {% else %}
             <img src="{{current_user.img_url}}" />
-            <a href="account">{{current_user.name}}</a>
+            <a href="{{url_for('account')}}">{{current_user.name}}</a>
             {% endif %} {% endif %}
           </a>
         </div>
         <div class="link-group">
-          <a href="home">Home</a>
+          <a href="{{url_for('home')}}">Home</a>
         </div>
         <div class="link-group">
-          <a href="logout">Logout</a>
+          <a href="{{url_for('view_top_posts')}}">Top Posts</a>
+        </div>
+        <div class="link-group">
+          <a href="{{url_for('logout')}}">Logout</a>
         </div>
         <div class="notification-group">
           <div class="link-group">
