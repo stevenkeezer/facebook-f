@@ -3,6 +3,8 @@ from flask_login import UserMixin, LoginManager, login_required, login_user, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
+from flask_migrate import Migrate
+
 import re
 
 app = Flask(__name__)
@@ -14,7 +16,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 login_manager = LoginManager(app)
 moment = Moment(app)
 
-
+migrate = Migrate(app, db)
 
 
 class User(UserMixin, db.Model):
@@ -40,6 +42,7 @@ class Post(db.Model):
   img = db.Column(db.String)
   created_at = db.Column(db.DateTime, server_default=db.func.now()) 
   updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+  view_count = db.Column(db.Integer, default=0)
 
 class Comments(db.Model):
   __tablename__ = 'comments'
@@ -82,6 +85,22 @@ def home():
         for like in post.likes:
             like.num = User.query.get(like.post_id)
     return render_template('home.html', posts=posts)
+
+
+@app.route('/posts/top/')
+def view_top_posts():
+
+    posts = Post.query.order_by(Post.view_count.desc()).all()
+    for post in posts:
+        post.user = User.query.get(post.user_id)
+        post.comments = Comments.query.filter_by(post_id=post.id).all()
+        post.likes = PostLike.query.filter_by(post_id=post.id).all()
+        for comment in post.comments:
+            comment.user_name = User.query.get(comment.user_id)
+        for like in post.likes:
+            like.num = User.query.get(like.post_id)
+    return render_template('home.html', posts=posts)
+
 
 @app.route("/logout")
 @login_required
@@ -148,8 +167,12 @@ def user_profile(id):
 @app.route('/view_post/<id>', methods=["GET", "POST"])
 def view_post(id):
     post = Post.query.get(id)
+    post.view_count = post.view_count + 1
+    db.session.add(post)
+    db.session.commit()
     comments = Comments.query.filter_by(post_id=post.id).all()
     posts = Post.query.order_by(Post.created_at.desc()).all()
+
     for post in posts:
         post.user = User.query.get(post.user_id)
         post.comments = Comments.query.filter_by(post_id=post.id).all()
@@ -157,6 +180,10 @@ def view_post(id):
             comment.user_name = User.query.get(comment.user_id)
     post = Post.query.get(id)
     return render_template('view_post.html', post=post, posts=posts, comments=comments)
+
+
+
+
 
 @app.route('/delete_post/<id>', methods=["GET", "POST"])
 def delete_post(id):
