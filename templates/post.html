@@ -7,9 +7,9 @@
                 <img
                 class="rounded-circle"
                 src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
-              />
+              ></img>
                 {% else %}
-                <img class="rounded-circle" src="{{post.user.img_url}}" />
+                <img class="rounded-circle" src="{{post.user.img_url}}" ></img>
                 {% endif %}
               <span >{{post.user.name}}</span>
             </a>
@@ -87,9 +87,9 @@
               <img
               class="rounded-circle"
               src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
-            />
+            ></img>
               {% else %}
-              <img class="rounded-circle mr-3" src="{{post.user.img_url}}" />
+              <img class="rounded-circle mr-3" src="{{post.user.img_url}}" ></img>
               {% endif %}
             </a>
             <form  action="/post/{{post.id}}/comments" method="POST">
@@ -105,9 +105,9 @@
             <img
             class="mr-4 rounded-circle"
             src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
-          />
+          ></img>
             {% else %}
-            <img class="mr-4 rounded-circle"  src={{comment.user_name.img_url}}>
+            <img class="mr-4 rounded-circle"  src={{comment.user_name.img_url}}></img>
             {% endif %}
             <div class="row">
               <a class="mt-3 mr-1" href="#">{{comment.user_name.name}}</a>
