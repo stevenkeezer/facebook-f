@@ -74,17 +74,17 @@
             {% for comment in post.comments %}
             <li>
               <a href="#" class="cmt-thumb">
-                {% if comment.user_name.img_url == None %}
+                {% if comment.user_comments.img_url == None %}
                 <img
                   class="mr-3"
                   src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
                 />
                 {% else %}
-                <img class="mr-2" src="{{comment.user_name.img_url}}" />
+                <img class="mr-2" src="{{comment.user_comments.img_url}}" />
                 {% endif %}
               </a>
               <div class="cmt-details">
-                <a href="#">{{comment.user_name.name}}</a>
+                <a href="#">{{comment.user_comments.name}}</a>
                 <span>
                   {{comment.body}}
                 </span>

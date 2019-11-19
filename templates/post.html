@@ -101,16 +101,16 @@
           </div>
           {% for comment in post.comments %}
           <div class="row pl-4">
-            {% if comment.user_name.img_url == None %}
+            {% if comment.user_comments.img_url == None %}
             <img
             class="mr-4 rounded-circle"
             src="https://www.medaid.co.uk/wp-content/uploads/2019/04/default.jpg"
           ></img>
             {% else %}
-            <img class="mr-4 rounded-circle"  src={{comment.user_name.img_url}}></img>
+            <img class="mr-4 rounded-circle"  src={{comment.user_comments.img_url}}></img>
             {% endif %}
             <div class="row">
-              <a class="mt-3 mr-1" href="#">{{comment.user_name.name}}</a>
+              <a class="mt-3 mr-1" href="#">{{comment.user_comments.name}}</a>
             </div>
             <form action="/post/edit_comment/{{comment.id}}"  method="POST" >
               <input readonly class="commentContent mt-3 ml-3" style="width: 26vw" name="body" id={{comment.id}} value="{{comment.body}}"/>

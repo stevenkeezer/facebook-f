@@ -27,6 +27,9 @@ class User(UserMixin, db.Model):
   email = db.Column(db.String(50), nullable=False, unique=True)
   password = db.Column(db.String(255), nullable=False)
   img_url = db.Column(db.String(155))
+  is_admin = db.Column(db.Boolean, default=False, nullable=False)
+  posts = db.relationship('Post', backref="user", lazy=True)
+  comments = db.relationship('Comments', backref="user_comments", lazy=True)
 
   def generate_password(self,password):
     self.password = generate_password_hash(password)
@@ -38,19 +41,21 @@ class Post(db.Model):
   __tablename__ = 'posts'
   id = db.Column(db.Integer, primary_key=True)
   body = db.Column(db.String, nullable=False)
-  user_id = db.Column(db.Integer, nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
   like = db.Column(db.Integer, default=0)
   img = db.Column(db.String)
   created_at = db.Column(db.DateTime, server_default=db.func.now()) 
   updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
   view_count = db.Column(db.Integer, default=0)
+  comments = db.relationship('Comments', backref="post", lazy=True)
+
 
 class Comments(db.Model):
   __tablename__ = 'comments'
   id = db.Column(db.Integer, primary_key=True)
   body = db.Column(db.String, nullable=False)
-  user_id = db.Column(db.Integer, nullable=False)
-  post_id = db.Column(db.Integer, nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+  post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
   created_at = db.Column(db.DateTime, server_default=db.func.now()) 
   updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -60,6 +65,7 @@ class PostLike(db.Model):
   user_id = db.Column(db.Integer)
   post_id = db.Column(db.Integer)
     
+
 db.create_all()
 
 @login_manager.user_loader
@@ -78,11 +84,7 @@ def home():
         return redirect(url_for('register'))
     posts = Post.query.order_by(Post.created_at.desc()).all()
     for post in posts:
-        post.user = User.query.get(post.user_id)
-        post.comments = Comments.query.filter_by(post_id=post.id).all()
         post.likes = PostLike.query.filter_by(post_id=post.id).all()
-        for comment in post.comments:
-            comment.user_name = User.query.get(comment.user_id)
         for like in post.likes:
             like.num = User.query.get(like.post_id)
     return render_template('home.html', posts=posts)
@@ -90,14 +92,10 @@ def home():
 
 @app.route('/posts/top/')
 def view_top_posts():
-
     posts = Post.query.order_by(Post.view_count.desc()).all()
     for post in posts:
         post.user = User.query.get(post.user_id)
-        post.comments = Comments.query.filter_by(post_id=post.id).all()
         post.likes = PostLike.query.filter_by(post_id=post.id).all()
-        for comment in post.comments:
-            comment.user_name = User.query.get(comment.user_id)
         for like in post.likes:
             like.num = User.query.get(like.post_id)
     return render_template('home.html', posts=posts)
@@ -159,11 +157,7 @@ def user_profile(id):
         user = User.query.get(post.user_id)
         post.user_name = user.name
         post.user = User.query.get(post.user_id)
-        comments = Comments.query.filter_by(post_id=post.id).all()
-        post.comments = Comments.query.filter_by(post_id=post.id).all()
-        for comment in post.comments:
-            comment.user_name = User.query.get(comment.user_id)
-    return render_template('user_profile.html', posts=posts, comments=comments)
+    return render_template('user_profile.html', posts=posts)
 
 @app.route('/view_post/<id>', methods=["GET", "POST"])
 def view_post(id):
